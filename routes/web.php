@@ -70,11 +70,11 @@ Route::get('/', function () use ($tasks) {
     return view('index', [
         'tasks' => $tasks
     ]);
-})->name('tasks.index');
+})->name('tasks.index'); // 'index' --> route that shows a list of elements 
 
 Route::get('/{id}', function ($id) {
     return 'One single task';
-})->name('tasks.show');
+})->name('tasks.show'); // 'show' --> route that shows a single element 
 
 // Route::get('/xxx', function () {
 //     return 'Hello';
