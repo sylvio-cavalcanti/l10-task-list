@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +20,7 @@ class Task
         public int $id,
         public string $title,
         public string $description,
-        public ?string $long_description,
+        public ?string $long_description, // optional
         public bool $completed,
         public string $created_at,
         public string $updated_at
@@ -66,15 +67,39 @@ $tasks = [
     ),
 ];
 
-Route::get('/', function () use ($tasks) {
+Route::get('/', function () {
+    return redirect()->route('tasks.index');
+});
+
+Route::get('/tasks', function () use ($tasks) {
     return view('index', [
         'tasks' => $tasks
     ]);
 })->name('tasks.index'); // 'index' --> route that shows a list of elements 
 
-Route::get('/{id}', function ($id) {
-    return 'One single task';
+Route::get('/tasks/{id}', function ($id) use ($tasks) {
+    // We only want one task, using an specific id being passed
+    // to get an specific id from the array we would have to loop the array until we had found it
+    // the laravel way of doind this is using the collect function
+    // This function will convert arrays into laravel collection, which are objects in php
+    // in php arrays are primitive data types, they are objects
+
+    $task = collect($tasks)->firstWhere('id', $id);
+    /* 
+        firstWhere() is searching for the first occurrence where the property 'id' in the $tasks collection
+        is the same as the variable $id from the route that is being passed as parameter
+    */
+    if(!$task) { 
+        // If the data base model or page is not found, returns an 'Not Found' error
+        // Must import 'Illuminate\Http\Response;'
+        abort(Response::HTTP_NOT_FOUND);
+    }
+    // If the id is found in the other hand, the show.blade page will be shown 
+    return view('show', ['task' => $task]);
+
 })->name('tasks.show'); // 'show' --> route that shows a single element 
+
+
 
 // Route::get('/xxx', function () {
 //     return 'Hello';
