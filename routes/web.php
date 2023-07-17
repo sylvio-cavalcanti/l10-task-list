@@ -2,6 +2,7 @@
 
 use App\Models\Task;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,9 @@ Route::get('/tasks', function () {
     ]);
 })->name('tasks.index'); // 'index' --> route that shows a list of elements 
 
+Route::view('/tasks/create', 'create')
+    ->name('tasks.create');
+
 Route::get('/tasks/{id}', function ($id) {
     
     // Retriving a record from the Task table using the id primary key as reference
@@ -33,6 +37,10 @@ Route::get('/tasks/{id}', function ($id) {
     return view('show', ['task' => \App\Models\Task::findOrFail($id)]);
 
 })->name('tasks.show'); // 'show' --> route that shows a single element 
+
+Route::post('/tasks', function (Request $request) {
+    dd($request->all()); // All the data being sent through the form
+})->name('tasks.store');
 
 
 
