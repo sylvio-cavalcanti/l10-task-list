@@ -39,7 +39,28 @@ Route::get('/tasks/{id}', function ($id) {
 })->name('tasks.show'); // 'show' --> route that shows a single element 
 
 Route::post('/tasks', function (Request $request) {
-    dd($request->all()); // All the data being sent through the form
+    $data = $request->validate([
+        // Defining the name of the input fields and its validation rules
+        'title' => 'required|max:255', // More then one rule can be set separated by a '|'
+        'description' => 'required',
+        'long_description' => 'required'
+    ]);
+
+    // Creating a new 'task' model
+    $task = new Task;
+    
+    // Setting each value, one by one
+    $task->title = $data['title'];
+    $task->description = $data['description'];
+    $task->long_description = $data['long_description'];
+    // This creates a new class, which is a model that exists only in the memory and not the database
+
+    // Saving to the databse using the save() method
+    $task->save(); // Laravel will run an insert query, to save this record to the Task table in the DB 
+    
+    // Redirecting to the tasks.show page with the newly created record/task
+    return redirect()->route('tasks.show', ['id' => $task->id]); // using an associative array
+
 })->name('tasks.store');
 
 
