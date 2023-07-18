@@ -59,7 +59,8 @@ Route::post('/tasks', function (Request $request) {
     $task->save(); // Laravel will run an insert query, to save this record to the Task table in the DB 
     
     // Redirecting to the tasks.show page with the newly created record/task
-    return redirect()->route('tasks.show', ['id' => $task->id]); // using an associative array
+    return redirect()->route('tasks.show', ['id' => $task->id]) // using an associative array
+        ->with('success', 'Task created successfully'); 
 
 })->name('tasks.store');
 
