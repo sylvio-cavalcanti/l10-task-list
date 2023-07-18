@@ -3,6 +3,7 @@
 
     <head>
         <title>Laravel 10 Task App</title>
+        @yield('styles')
     </head>
 
     <body>
