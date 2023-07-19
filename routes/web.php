@@ -30,6 +30,14 @@ Route::get('/tasks', function () {
 Route::view('/tasks/create', 'create')
     ->name('tasks.create');
 
+Route::get('/tasks/{id}/edit', function ($id) {
+
+    return view('edit',[
+        'task' => Task::findOrFail($id)
+    ]);
+
+})->name('tasks.edit');
+    
 Route::get('/tasks/{id}', function ($id) {
     
     // Retriving a record from the Task table using the id primary key as reference
@@ -64,6 +72,28 @@ Route::post('/tasks', function (Request $request) {
 
 })->name('tasks.store');
 
+Route::put('/tasks/{id}', function ($id, Request $request) {
+    $data = $request->validate([
+        // Defining the name of the input fields and its validation rules
+        'title' => 'required|max:255', // More then one rule can be set separated by a '|'
+        'description' => 'required',
+        'long_description' => 'required'
+    ]);
+
+    // Find the task being passed as parameter
+    $task = Task::findOrFail($id);
+    
+    $task->title = $data['title'];
+    $task->description = $data['description'];
+    $task->long_description = $data['long_description'];
+    // Laravel is smart enought to run an update query, since this is a PUT http request
+    $task->save();
+    
+    // Redirecting to the tasks.show page
+    return redirect()->route('tasks.show', ['id' => $task->id])
+        ->with('success', 'Task updated successfully'); 
+
+})->name('tasks.update');
 
 
 // Route::get('/xxx', function () {
